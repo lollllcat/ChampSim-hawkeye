@@ -2,7 +2,9 @@
 #define CACHE_H
 
 #include "memory_class.h"
-
+#include <vector>
+#include <bits/stdc++.h>
+#include <unordered_map>
 // PAGE
 extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 
@@ -10,10 +12,10 @@ extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 #define IS_ITLB 0
 #define IS_DTLB 1
 #define IS_STLB 2
-#define IS_L1I  3
-#define IS_L1D  4
-#define IS_L2C  5
-#define IS_LLC  6
+#define IS_L1I 3
+#define IS_L1D 4
+#define IS_L2C 5
+#define IS_LLC 6
 
 // INSTRUCTION TLB
 #define ITLB_SET 16
@@ -46,37 +48,80 @@ extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 #define L1I_SET 64
 #define L1I_WAY 8
 #define L1I_RQ_SIZE 64
-#define L1I_WQ_SIZE 64 
-#define L1I_PQ_SIZE 32
+#define L1I_WQ_SIZE 64
+#define L1I_PQ_SIZE 8
 #define L1I_MSHR_SIZE 8
-#define L1I_LATENCY 4
+#define L1I_LATENCY 1
 
-// L1 DATA CACHE
-#define L1D_SET 64
-#define L1D_WAY 12
+//Added by Sayak
+//As defined in champsim.h #define BLOCK_SIZE 64
+//L1-D Cache as defined in Hawkeye 32 KB 4-way, 1-cycle latency
+//L1 DATA CACHE NEW
+#define L1D_SET 128
+#define L1D_WAY 4
+//#define L1D_SET 2048
+//#define L1D_WAY 16
 #define L1D_RQ_SIZE 64
-#define L1D_WQ_SIZE 64 
+#define L1D_WQ_SIZE 64
 #define L1D_PQ_SIZE 8
 #define L1D_MSHR_SIZE 16
-#define L1D_LATENCY 5 
+#define L1D_LATENCY 1
 
-// L2 CACHE
-#define L2C_SET 1024
+// L1 DATA CACHE
+//#define L1D_SET 64
+//#define L1D_WAY 12
+//#define L1D_RQ_SIZE 64
+//#define L1D_WQ_SIZE 64
+//#define L1D_PQ_SIZE 8
+//#define L1D_MSHR_SIZE 16
+//#define L1D_LATENCY 4
+
+//256 KB, 8-way
+//L2 CACHE NEW
+#define L2C_SET 512
 #define L2C_WAY 8
+//128 KB, 8-way
+//#define L2C_SET 256
+//#define L2C_WAY 8
+//#define L2C_SET 1
+//#define L2C_WAY 1
 #define L2C_RQ_SIZE 32
 #define L2C_WQ_SIZE 32
 #define L2C_PQ_SIZE 16
 #define L2C_MSHR_SIZE 32
-#define L2C_LATENCY 10  // 4/5 (L1I or L1D) + 10 = 14/15 cycles
+#define L2C_LATENCY 10 // 1 (L1I or L1D) + 9 = 10 cycles
 
-// LAST LEVEL CACHE
-#define LLC_SET NUM_CPUS*2048
-#define LLC_WAY 16
-#define LLC_RQ_SIZE NUM_CPUS*L2C_MSHR_SIZE //48
-#define LLC_WQ_SIZE NUM_CPUS*L2C_MSHR_SIZE //48
-#define LLC_PQ_SIZE NUM_CPUS*32
-#define LLC_MSHR_SIZE NUM_CPUS*64
-#define LLC_LATENCY 20  // 4/5 (L1I or L1D) + 10 + 20 = 34/35 cycles
+// L2 CACHE
+//#define L2C_SET 1024
+//#define L2C_WAY 8
+//#define L2C_RQ_SIZE 32
+//#define L2C_WQ_SIZE 32
+//#define L2C_PQ_SIZE 16
+//#define L2C_MSHR_SIZE 32
+//#define L2C_LATENCY 8  // 4 (L1I or L1D) + 8 = 12 cycles
+
+// LAST LEVEL CACHE (2MB, 16-way, 20 cycle)
+#define LLC_SET NUM_CPUS * 4096
+#define LLC_WAY 8
+// LAST LEVEL CACHE (256KB, 4-way, 20 cycle)
+//#define LLC_SET NUM_CPUS*1024
+//#define LLC_WAY 4
+//#define LLC_SET 1
+//#define LLC_WAY 1
+#define LLC_RQ_SIZE NUM_CPUS *L2C_MSHR_SIZE //48
+#define LLC_WQ_SIZE NUM_CPUS *L2C_MSHR_SIZE //48
+#define LLC_PQ_SIZE NUM_CPUS * 32
+#define LLC_MSHR_SIZE NUM_CPUS * 64
+#define LLC_LATENCY 20 // 4 (L1I or L1D) + 8 + 20 = 32 cycles
+
+//tiny LLC( 4KB, forcing conflicting misses
+//#define LLC_SET NUM_CPUS*16
+//#define LLC_WAY 4
+//#define LLC_RQ_SIZE NUM_CPUS*L2C_MSHR_SIZE //48
+//#define LLC_WQ_SIZE NUM_CPUS*L2C_MSHR_SIZE //48
+//#define LLC_PQ_SIZE NUM_CPUS*32
+//#define LLC_MSHR_SIZE NUM_CPUS*64
+//#define LLC_LATENCY 20  // 4 (L1I or L1D) + 8 + 20 = 32 cycles
 
 class CACHE : public MEMORY {
   public:

@@ -18,8 +18,8 @@
 #include <map>
 
 #define NUM_CORE 1
-#define LLC_SETS NUM_CORE*2048
-#define LLC_WAYS 16
+#define LLC_SETS LLC_SET
+#define LLC_WAYS LLC_WAY
 
 //3-bit RRIP counters or all lines
 #define maxRRPV 7
